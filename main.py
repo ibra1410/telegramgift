@@ -1,5 +1,3 @@
-#by....... 
-
 import zipfile
 import os
 try:
@@ -49,134 +47,133 @@ except:
         from plugins.messages import *
         from plugins.get_gift import *
     except Exception as errors:
-        print('An Erorr with: ' + str(errors))
-        
+        print('Bir hata oluştu: ' + str(errors))
         exit(0)
 
         
-if not os.path.isdir('database'):
-    os.mkdir('database')
+if not os.path.isdir('veritabanı'):
+    os.mkdir('veritabanı')
 
-API_ID = "22256614"
-API_HASH = "4f9f53e287de541cf0ed81e12a68fa3b"
-admin ='5934218120'
+API_ID = "21871272"
+API_HASH = "57efa4949cd41dccd628c04b8507ff2b"
+admin ='12563655354'
 
-# Replace with your bot token
-token = "6641455664:AAHHF1s-rgVsppxo2Rtpw-1VHanD5F5gntk"
+# Botunuzun token'i ile değiştirin
+token = "6776395463:AAH2z5apFePZmHlllaePmlttntf4EhExWqg"
 client = TelegramClient('ses', API_ID, API_HASH)
 client.start()
 bot = client
 
-#Create DataBase
-db = uu('database/elhakem.ss', 'bot')
+# Veritabanını oluştur
+db = uu('veritabanı/elhakem.ss', 'bot')
 
-if not db.exists("accounts"):
-    db.set("accounts", [])
+if not db.exists("hesaplar"):
+    db.set("hesaplar", [])
 
-if not db.exists("bad_guys"):
-    db.set("bad_guys", [])
+if not db.exists("kötü_adamlar"):
+    db.set("kötü_adamlar", [])
 
-if not db.exists("force"):
-   db.set("force", [])
+if not db.exists("zorla"):
+   db.set("zorla", [])
       
-@client.on(events.NewMessage(pattern="/start", func = lambda x: x.is_private))
-async def start(event):
+@client.on(events.NewMessage(pattern="/başla", func = lambda x: x.is_private))
+async def başla(event):
     user_id = event.chat_id
-    bans = db.get('bad_guys') if db.exists('bad_guys') else []
+    bans = db.get('kötü_adamlar') if db.exists('kötü_adamlar') else []
     async with bot.conversation(event.chat_id) as x:
         buttons = [
             [
-                Button.inline("اضافة حساب", data="add"),
-                Button.inline("جلب الروابط", data="get_gift"),
+                Button.inline("Hesap Ekle", data="ekle"),
+                Button.inline("Hediyeleri Al", data="hediye_al"),
             ],
             [
-                Button.inline("الانضمام لقناة", data="join_channel"),
-                Button.inline("مغادرة قناة", data="leave_channel"),
+                Button.inline("Kanala Katıl", data="kanala_katıl"),
+                Button.inline("Kanalı Terk Et", data="kanaldan_ayrıl"),
             ],
             [
-                Button.inline("تسجيل جلسة بايروجرام", data="pyrogram"),
-                Button.inline("تسجيل جلسة تليثون", data="telethon"),
+                Button.inline("Pyrogram Oturumu Kaydet", data="pyrogram"),
+                Button.inline("Telethon Oturumu Kaydet", data="telethon"),
             ],
             [
-                Button.inline("نسخة احتياطية", data="zip_all"),
-                Button.inline("جلب جلسة", data="get_session"),
+                Button.inline("Yedekle", data="hepsini_ziple"),
+                Button.inline("Oturumu Al", data="oturum_al"),
             ],
             [
-                Button.inline("عدد حسابات البوت", data="get_accounts_count"),
+                Button.inline("Botun Hesap Sayısı", data="hesap_sayısı"),
             ],
             [
-                Button.inline("تنظيف الحسابات", data="check"),
-                Button.inline("مغادرة القنوات", data="leave_all"),
+                Button.inline("Hesapları Temizle", data="kontrol"),
+                Button.inline("Tüm Kanalları Terk Et", data="hepsinden_ayrıl"),
             ],
         ]
-        await event.reply("**- مرحبا بك في بوت جلب روابط المميز من حساباتك المسجلة 🔗**\n\n- اختر من الازرار ادناه ما تود فعله.", buttons=buttons)
+        await event.reply("**- Hesaplarınızdan Özel Bağlantıları Getiren Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
         
         
         
 @client.on(events.callbackquery.CallbackQuery())
-async def start_lis(event):
+async def başla_dinle(event):
     data = event.data.decode('utf-8')
     user_id = event.chat_id
     if data == "pyrogram":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- ارسل الان سيشن جلسة بايرورجرام")
+            await x.send_message("- Şimdi Pyrogram oturumunu gönderin")
             txt = await x.get_response()
             session = txt.text
             try:
                 Convert_sess = MangSession.PYROGRAM_TO_TELETHON(session)
             except:
-                return await x.send_message("- ارسل سيشن بايروجرام بشكل صحيح")
-            data = {"phone_number": "لم يتم التعرف", "two-step": "لا يوجد", "session": Convert_sess}
-            acc = db.get("accounts")
+                return await x.send_message("- Lütfen doğru biçimde Pyrogram oturumunu gönderin")
+            data = {"phone_number": "Tanınmadı", "two-step": "Yok", "session": Convert_sess}
+            acc = db.get("hesaplar")
             acc.append(data)
-            db.set("accounts", acc)
-            with open('session.txt', 'w') as file:
+            db.set("hesaplar", acc)
+            with open('oturum.txt', 'w') as file:
                 file.write(str(session) + '\n')
-            await x.send_message("- تم حفظ السيشن بنجاح ✅")
+            await x.send_message("- Oturum başarıyla kaydedildi ✅")
     
     if data == "telethon":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- ارسل الان سيشن جلسة تليثون")
+            await x.send_message("- Şimdi Telethon oturumunu gönderin")
             txt = await x.get_response()
             session = txt.text
-            data = {"phone_number": "لم يتم التعرف", "two-step": "لا يوجد", "session": Convert_sess}
-            acc = db.get("accounts")
+            data = {"phone_number": "Tanınmadı", "two-step": "Yok", "session": Convert_sess}
+            acc = db.get("hesaplar")
             acc.append(data)
-            db.set("accounts", acc)
-            with open('session.txt', 'w') as file:
+            db.set("hesaplar", acc)
+            with open('oturum.txt', 'w') as file:
                 file.write(str(session) + '\n')
-            await x.send_message("- تم حفظ السيشن بنجاح ✅")
+            await x.send_message("- Oturum başarıyla kaydedildi ✅")
             
-    if data == "back" or data == "cancel":
+    if data == "geri" or data == "iptal":
         buttons = [
             [
-                Button.inline("اضافة حساب", data="add"),
-                Button.inline("جلب الروابط", data="get_gift"),
+                Button.inline("Hesap Ekle", data="ekle"),
+                Button.inline("Hediyeleri Al", data="hediye_al"),
             ],
             [
-                Button.inline("الانضمام لقناة", data="join_channel"),
-                Button.inline("مغادرة قناة", data="leave_channel"),
+                Button.inline("Kanala Katıl", data="kanala_katıl"),
+                Button.inline("Kanalı Terk Et", data="kanaldan_ayrıl"),
             ],
             [
-                Button.inline("تسجيل جلسة بايروجرام", data="pyrogram"),
-                Button.inline("تسجيل جلسة تليثون", data="telethon"),
+                Button.inline("Pyrogram Oturumu Kaydet", data="pyrogram"),
+                Button.inline("Telethon Oturumu Kaydet", data="telethon"),
             ],
             [
-                Button.inline("نسخة احتياطية", data="zip_all"),
-                Button.inline("جلب جلسة", data="get_session"),
+                Button.inline("Yedekle", data="hepsini_ziple"),
+                Button.inline("Oturumu Al", data="oturum_al"),
             ],
             [
-                Button.inline("عدد حسابات البوت", data="get_accounts_count"),
+                Button.inline("Botun Hesap Sayısı", data="hesap_sayısı"),
             ],
             [
-                Button.inline("تنظيف الحسابات", data="check"),
-                Button.inline("مغادرة القنوات", data="leave_all"),
+                Button.inline("Hesapları Temizle", data="kontrol"),
+                Button.inline("Tüm Kanalları Terk Et", data="hepsinden_ayrıl"),
             ],
         ]
-        await event.edit("**- مرحبا بك في بوت جلب روابط المميز من حساباتك المسجلة 🔗**\n\n- اختر من الازرار ادناه ما تود فعله.", buttons=buttons)
-    if data == "add":
+        await event.edit("**- Hesaplarınızdan Özel Bağlantıları Getiren Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
+    if data == "ekle":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("✔️الان ارسل رقمك مع رمز دولتك , مثال :+201000000000")
+            await x.send_message("✔️Şimdi telefon numaranızı ve ülke kodunuzu gönderin, örneğin: +201000000000")
             txt = await x.get_response()
             phone_number = txt.text.replace("+", "").replace(" ", "")
             app = TelegramClient(StringSession(), API_ID, API_HASH)
@@ -185,96 +182,96 @@ async def start_lis(event):
             try:
                 code = await app.send_code_request(phone_number)
             except (ApiIdInvalidError):
-                await x.send_message("ʏᴏᴜʀ **ᴀᴩɪ_ɪᴅ** ᴀɴᴅ **ᴀᴩɪ_ʜᴀsʜ** ᴄᴏᴍʙɪɴᴀᴛɪᴏɴ ᴅᴏᴇsɴ'ᴛ ᴍᴀᴛᴄʜ ᴡɪᴛʜ ᴛᴇʟᴇɢʀᴀᴍ ᴀᴩᴩs sʏsᴛᴇᴍ.")
+                await x.send_message("**API_ID** ve **API_HASH** kombinasyonunuz Telegram API sistemine uymuyor.")
                 return
             except (PhoneNumberInvalidError):
-                await x.send_message("ᴛʜᴇ **ᴩʜᴏɴᴇ_ɴᴜᴍʙᴇʀ** ʏᴏᴜ'ᴠᴇ sᴇɴᴛ ᴅᴏᴇsɴ'ᴛ ʙᴇʟᴏɴɢ ᴛᴏ ᴀɴʏ ᴛᴇʟᴇɢʀᴀᴍ ᴀᴄᴄᴏᴜɴᴛ.")
+                await x.send_message("**Gönderdiğiniz telefon numarası** herhangi bir Telegram hesabına ait değil.")
                 return
-            await x.send_message("- تم ارسال كود التحقق الخاص بك علي حسابك علي تليجرام.\n\n- ارسل الكود بالتنسيق التالي : 1 2 3 4 5")
+            await x.send_message("- Doğrulama kodunuz hesabınıza gönderildi.\n\n- Lütfen kodu aşağıdaki formatta gönderin: 1 2 3 4 5")
             txt = await x.get_response()
             code = txt.text.replace(" ", "")
             try:
                 await app.sign_in(phone_number, code, password=None)
                 string_session = app.session.save()
-                data = {"phone_number": phone_number, "two-step": "لا يوجد", "session": string_session}
-                accounts = db.get("accounts")
+                data = {"phone_number": phone_number, "two-step": "Yok", "session": string_session}
+                accounts = db.get("hesaplar")
                 accounts.append(data)
-                db.set("accounts", accounts)
-                await x.send_message("- تم حفظ الحساب بنجاح ✅")
+                db.set("hesaplar", accounts)
+                await x.send_message("- Hesap başarıyla kaydedildi ✅")
             except (PhoneCodeInvalidError):
-                await x.send_message("ᴛʜᴇ ᴏᴛᴩ ʏᴏᴜ'ᴠᴇ sᴇɴᴛ ɪs **ᴡʀᴏɴɢ.**")
+                await x.send_message("**Gönderdiğiniz OTP** yanlış.")
                 return
             except (PhoneCodeExpiredError):
-                await x.send_message("ᴛʜᴇ ᴏᴛᴩ ʏᴏᴜ'ᴠᴇ sᴇɴᴛ ɪs **ᴇxᴩɪʀᴇᴅ.**")
+                await x.send_message("**Gönderdiğiniz OTP** süresi dolmuş.")
                 return
             except (SessionPasswordNeededError):
-                await x.send_message("- ارسل رمز التحقق بخطوتين الخاص بحسابك")
+                await x.send_message("- Lütfen iki adımlı doğrulama kodunuzu gönderin")
                 txt = await x.get_response()
                 password = txt.text
                 try:
                     await app.sign_in(password=password)
                 except (PasswordHashInvalidError):
-                    await x.send_message("ᴛʜᴇ ᴩᴀssᴡᴏʀᴅ ʏᴏᴜ'ᴠᴇ sᴇɴᴛ ɪs ᴡʀᴏɴɢ.")
+                    await x.send_message("**Gönderdiğiniz şifre** yanlış.")
                     return
                 string_session = app.session.save()
                 data = {"phone_number": phone_number, "two-step": password, "session": string_session}
-                accounts = db.get("accounts")
+                accounts = db.get("hesaplar")
                 accounts.append(data)
-                db.set("accounts", accounts)
-                await x.send_message("- تم حفظ الحساب بنجاح ✅")
-    if data == "get_accounts_count":
-        acc = db.get("accounts")
-        await event.answer(f"- عدد الحسابات المسجلة ; {len(acc)}", alert=True)
-    if data == "get_gift":
-        await event.answer(f"- تم بدا جلب روابط المميز من الحسابات برجاء انتظار اشعار", alert=True)
-        acc = db.get("accounts")
+                db.set("hesaplar", accounts)
+                await x.send_message("- Hesap başarıyla kaydedildi ✅")
+    if data == "hesap_sayısı":
+        acc = db.get("hesaplar")
+        await event.answer(f"- Kayıtlı hesap sayısı: {len(acc)}", alert=True)
+    if data == "hediye_al":
+        await event.answer(f"- Hesaplardan hediyeler alınmaya başlandı, lütfen bildirimi bekleyin", alert=True)
+        acc = db.get("hesaplar")
         count = 0
         for i in acc:
             x = await get_gift(i["session"])
             if x != False:
-                text = f"**• رابط تليجرام مميز جديد 🥳**\n\n- الرابط : https://t.me/giftcode/{x}\n- رقم الهاتف : `{i['phone_number']}`"
+                text = f"**• Yeni bir Telegram hediye bağlantısı 🥳**\n\n- Bağlantı: https://t.me/giftcode/{x}\n- Telefon numarası: `{i['phone_number']}`"
                 count += 1
                 await client.send_message(admin, text)
-        await client.send_message(admin, f"- تم الانتهاء من فحص الحسابات تم ايجاد {count} روابط")
-    if data == "join_channel":
+        await client.send_message(admin, f"- Hesaplar kontrol edildi, {count} bağlantı bulundu")
+    if data == "kanala_katıl":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- ارسل الان رابط او معرف القناة التي تريد الانضمام لها بكل الحسابات")
+            await x.send_message("- Şimdi tüm hesapları belirtilen kanala katmak için bağlantıyı veya kanal kimliğini gönderin")
             ch = await x.get_response()
             if "@" not in ch.text:
                 if "/t.me/" not in ch.text:
-                    await x.send_message(f"- ارسل رابط او معرف القناة بشكل صحيح")
+                    await x.send_message(f"- Lütfen bağlantıyı veya kanal kimliğini doğru formatta gönderin")
                     return 
             channel = ch.text.replace("https://t.me/", "").replace("http://t.me/", "").replace("@", "")
-            acc = db.get("accounts")
+            acc = db.get("hesaplar")
             true, false = 0, 0
-            await x.send_message(f"- تم بدء الانضمام من {len(acc)} حساب")
+            await x.send_message(f"- {len(acc)} hesaptan katılmaya başlandı")
             for i in acc:
                 xx = await join_channel(i["session"], channel)
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- تم انتهاء طلبك بنجاح ✅**\n\n- نجاح : {true}\n- فشل : {false}")
-    if data == "leave_channel":
+            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
+    if data == "kanaldan_ayrıl":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- ارسل الان رابط او معرف القناة التي تريد المغادرة منها بكل الحسابات")
+            await x.send_message("- Şimdi tüm hesapları belirtilen kanaldan çıkmak için bağlantıyı veya kanal kimliğini gönderin")
             ch = await x.get_response()
             if "@" not in ch.text:
                 if "/t.me/" not in ch.text:
-                    await x.send_message(f"- ارسل رابط او معرف القناة بشكل صحيح")
+                    await x.send_message(f"- Lütfen bağlantıyı veya kanal kimliğini doğru formatta gönderin")
                     return 
             channel = ch.text.replace("https://t.me/", "").replace("http://t.me/", "").replace("@", "")
-            acc = db.get("accounts")
+            acc = db.get("hesaplar")
             true, false = 0, 0
-            await x.send_message(f"- تم بدء المغادرة من {len(acc)} حساب")
+            await x.send_message(f"- {len(acc)} hesaptan ayrılmaya başlandı")
             for i in acc:
                 xx = await leave_channel(i["session"], channel)
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- تم انتهاء طلبك بنجاح ✅**\n\n- نجاح : {true}\n- فشل : {false}")
-    if data == 'zip_all':
+            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
+    if data == 'hepsini_ziple':
         folder_path = f"./database"
         zip_file_name = f"database.zip"
         zip_file_nam = f"database"
@@ -285,42 +282,42 @@ async def start_lis(event):
             os.remove(zip_file_name)
         except Exception as a:
             print(a)
-    if data == "leave_all":
+    if data == "hepsinden_ayrıl":
         buttons = [
             [
-                Button.inline("تأكيد ✅", data="leave_all_channels"),
-                Button.inline("الغاء ❌", data="cancel"),
+                Button.inline("Onayla ✅", data="hepsinden_ayrıl_kanallar"),
+                Button.inline("İptal ❌", data="iptal"),
             ]
         ]
-        await event.edit("**- هل تود فعلاً تأكيد المغادرة من كل الحسابات؟**", buttons=buttons)
-    if data == "leave_all_channels":
+        await event.edit("**- Tüm hesaplardan kanalları terk etmek istediğinize emin misiniz?**", buttons=buttons)
+    if data == "hepsinden_ayrıl_kanallar":
         async with bot.conversation(event.chat_id) as x:
-            acc = db.get("accounts")
-            await event.edit(f"**- تم بدء مغادرة كل القنوات من {len(acc)} حساب, سيصلك اشعار عند الانتهاء **")
+            acc = db.get("hesaplar")
+            await event.edit(f"**- {len(acc)} hesaptan kanalları terk etmeye başlandı, tamamlandığında bildirim alacaksınız **")
             true, false = 0, 0
-            await x.send_message(f"- تم بدء المغادرة من {len(acc)} حساب")
+            await x.send_message(f"- {len(acc)} hesaptan kanalları terk etmeye başlandı")
             for i in acc:
                 xx = await leave_all(i["session"])
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- تم انتهاء مغادرة القنوات بنجاح ✅**\n\n- نجاح : {true}\n- فشل : {false}")
+            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
     
-    if data == "check":
+    if data == "kontrol":
         buttons = [
             [
-                Button.inline("تأكيد ✅", data="check_accounts"),
-                Button.inline("الغاء ❌", data="cancel"),
+                Button.inline("Onayla ✅", data="hesapları_kontrol_et"),
+                Button.inline("İptal ❌", data="iptal"),
             ]
         ]
-        await event.edit("**- هل تود فعلاً تأكيد المغادرة من كل الحسابات؟**", buttons=buttons)
-    if data == "check_accounts":
+        await event.edit("**- Tüm hesapları kontrol etmek istediğinize emin misiniz?**", buttons=buttons)
+    if data == "hesapları_kontrol_et":
         async with bot.conversation(event.chat_id) as x:
-            acc = db.get("accounts")
-            await event.edit(f"**- تم بدء فحص كل الحسابات من {len(acc)} حساب, سيصلك اشعار عند الانتهاء **")
+            acc = db.get("hesaplar")
+            await event.edit(f"**- {len(acc)} hesap kontrol edilmeye başlandı, tamamlandığında bildirim alacaksınız **")
             true, false = 0, 0
-            await x.send_message(f"- تم بدء فحص {len(acc)} حساب")
+            await x.send_message(f"- {len(acc)} hesap kontrol edilmeye başlandı")
             for i in acc:
                 Convert_sess = MangSession.TELETHON_TO_PYROGRAM(i["session"])
                 xx = await check(Convert_sess, client, user_id)
@@ -329,22 +326,22 @@ async def start_lis(event):
                 else:
                     false += 1
                     acc.remove(i)
-                    db.set("accounts", acc)
-                await event.edit(f"**- جاري فحص الحسابات بنجاح 📂**\n\n- حسابات شغالة : {true}\n- حسابات محذوفة : {false}")
+                    db.set("hesaplar", acc)
+                await event.edit(f"**- Hesaplar kontrol ediliyor 📂**\n\n- Çalışan hesaplar: {true}\n- Silinen hesaplar: {false}")
                 
-            await x.send_message(f"**- تم انتهاء فحص الحسابات بنجاح ✅**\n\n- حسابات شغالة : {true}\n- حسابات محذوفة : {false}")
-    if data == "get_session":
+            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Çalışan hesaplar: {true}\n- Silinen hesaplar: {false}")
+    if data == "oturum_al":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- ارسل الان رقم الهاتف الذي قمت بتسجيلة للبوت لجلب السيشن منه")
+            await x.send_message("- Lütfen bot için kaydettiğiniz telefon numarasını gönderin")
             txt = await x.get_response()
             phone_number = txt.text.replace("+", "").replace(" ", "")
-            acc = db.get("accounts")
+            acc = db.get("hesaplar")
             for i in acc:
                 if phone_number == i['phone_number']:
-                    text = f"• رقم الهاتف : {phone_number}\n\n- التحقق بخطوتين : {i['two-step']}\n\n- الجلسة : `{i['session']}"
+                    text = f"• Telefon numarası: {phone_number}\n\n- İki Adımlı Doğrulama: {i['two-step']}\n\n- Oturum: `{i['session']}"
                     await x.send_message(text)
                     return
-            await x.send_message("- لم يتم العثور علي هذا الرقم ضمن قائمة الحسابات")
+            await x.send_message("- Bu numara hesaplar listesinde bulunamadı")
             
 @client.on(events.NewMessage())
 async def handle_zip_file(event):
@@ -361,24 +358,24 @@ async def handle_zip_file(event):
                     zip_ref.extractall('olddata')
                     
                 os.remove(file)
-                await x.send_message('تم فك الضغط عن الملف بنجاح ووضعه في مجلد "olddata".')
-                olddb = uu('olddata/data.sqlite', 'fuck')
-                accs = db.get("accounts")
+                await x.send_message('Dosya başarıyla açıldı ve "olddata" klasörüne konuldu.')
+                olddb = uu('olddata/data.sqlite', 'eski')
+                accs = db.get("hesaplar")
                 if olddb.exists("sessions") and len(olddb.get("sessions")) > 0:
                     for i in olddb.get("sessions"):
                         Convert_sess = MangSession.PYROGRAM_TO_TELETHON(i)
-                        data = {"phone_number": "لم يتم التعرف", "two-step": "لا يوجد", "session": Convert_sess}
+                        data = {"phone_number": "Tanımlanamadı", "two-step": "Yok", "session": Convert_sess}
                         if data not in accs:
                             accs.append(data)
-                            db.set("accounts", accs)
-                    await x.send_message(f'تم بنجاح اضافة {len(olddb.get("sessions"))} حساب الي خزن البوت الحالي.')
+                            db.set("hesaplar", accs)
+                    await x.send_message(f'{len(olddb.get("sessions"))} hesap başarıyla eklendi.')
                 else: 
-                    await x.send_message(f'• هذا الخزن لا يحتوي علي اي ارقام')
+                    await x.send_message(f'• Bu depoda herhangi bir numara yok.')
         except Exception as e:
-            await x.send_message(f'حدثت مشكلة أثناء فك الضغط: {str(e)}')
+            await x.send_message(f'Zipten çıkarılırken bir sorun oluştu: {str(e)}')
         
 client.run_until_disconnected()
 
-#by @F_E_Y
-#channel: https://t.me/Se7en_Eyes
+#by @polatalemdar330
+#channel: https://t.me/polatalemdar330
 #in 06/02/2024
