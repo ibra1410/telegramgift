@@ -94,7 +94,7 @@ async def leave_all(session):
 
 async def check(session, bot, user_id):
     try:
-        client = Client('::memory::', api_id=22119881, api_hash='95f5f60466a696e33a34f297c734d048', in_memory=True, session_string=session)
+        client = Client('::memory::', api_id=21871272, api_hash='57efa4949cd41dccd628c04b8507ff2b', in_memory=True, session_string=session)
     except Exception as a:
         print(a)
     try:
