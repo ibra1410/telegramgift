@@ -47,39 +47,40 @@ except:
         from plugins.messages import *
         from plugins.get_gift import *
     except Exception as errors:
-        print('Bir hata oluştu: ' + str(errors))
+        print('Bir Hata Oluştu: ' + str(errors))
+        
         exit(0)
 
         
-if not os.path.isdir('veritabanı'):
-    os.mkdir('veritabanı')
+if not os.path.isdir('veritabani'):
+    os.mkdir('veritabani')
 
 API_ID = "21871272"
 API_HASH = "57efa4949cd41dccd628c04b8507ff2b"
 admin ='12563655354'
 
-# Botunuzun token'i ile değiştirin
+# Botunuzun tokeni ile değiştirin
 token = "6776395463:AAH2z5apFePZmHlllaePmlttntf4EhExWqg"
 client = TelegramClient('ses', API_ID, API_HASH)
 client.start()
 bot = client
 
 # Veritabanını oluştur
-db = uu('veritabanı/elhakem.ss', 'bot')
+db = uu('veritabani/elhakem.ss', 'bot')
 
 if not db.exists("hesaplar"):
     db.set("hesaplar", [])
 
-if not db.exists("kötü_adamlar"):
-    db.set("kötü_adamlar", [])
+if not db.exists("kotu_adamlar"):
+    db.set("kotu_adamlar", [])
 
 if not db.exists("zorla"):
    db.set("zorla", [])
       
-@client.on(events.NewMessage(pattern="/başla", func = lambda x: x.is_private))
-async def başla(event):
+@client.on(events.NewMessage(pattern="/start", func = lambda x: x.is_private))
+async def start(event):
     user_id = event.chat_id
-    bans = db.get('kötü_adamlar') if db.exists('kötü_adamlar') else []
+    bans = db.get('kotu_adamlar') if db.exists('kotu_adamlar') else []
     async with bot.conversation(event.chat_id) as x:
         buttons = [
             [
@@ -87,43 +88,43 @@ async def başla(event):
                 Button.inline("Hediyeleri Al", data="hediye_al"),
             ],
             [
-                Button.inline("Kanala Katıl", data="kanala_katıl"),
-                Button.inline("Kanalı Terk Et", data="kanaldan_ayrıl"),
+                Button.inline("Kanala Katıl", data="kanala_katil"),
+                Button.inline("Kanaldan Ayrıl", data="kanaldan_ayril"),
             ],
             [
                 Button.inline("Pyrogram Oturumu Kaydet", data="pyrogram"),
                 Button.inline("Telethon Oturumu Kaydet", data="telethon"),
             ],
             [
-                Button.inline("Yedekle", data="hepsini_ziple"),
-                Button.inline("Oturumu Al", data="oturum_al"),
+                Button.inline("Yedek Al", data="zip_tum"),
+                Button.inline("Oturum Al", data="oturum_al"),
             ],
             [
-                Button.inline("Botun Hesap Sayısı", data="hesap_sayısı"),
+                Button.inline("Bot Hesap Sayısı", data="hesap_sayisi"),
             ],
             [
-                Button.inline("Hesapları Temizle", data="kontrol"),
-                Button.inline("Tüm Kanalları Terk Et", data="hepsinden_ayrıl"),
+                Button.inline("Hesapları Temizle", data="kontrol_et"),
+                Button.inline("Kanallardan Ayrıl", data="tumunu_ayril"),
             ],
         ]
-        await event.reply("**- Hesaplarınızdan Özel Bağlantıları Getiren Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
+        await event.reply("**- Hesaplarınızdan Özel Bağlantıları Çeken Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
         
         
         
 @client.on(events.callbackquery.CallbackQuery())
-async def başla_dinle(event):
+async def start_lis(event):
     data = event.data.decode('utf-8')
     user_id = event.chat_id
     if data == "pyrogram":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- Şimdi Pyrogram oturumunu gönderin")
+            await x.send_message("- Lütfen Pyrogram oturumunuzu gönderin.")
             txt = await x.get_response()
             session = txt.text
             try:
                 Convert_sess = MangSession.PYROGRAM_TO_TELETHON(session)
             except:
-                return await x.send_message("- Lütfen doğru biçimde Pyrogram oturumunu gönderin")
-            data = {"phone_number": "Tanınmadı", "two-step": "Yok", "session": Convert_sess}
+                return await x.send_message("- Lütfen doğru bir Pyrogram oturumu gönderin.")
+            data = {"telefon_numarası": "Belirlenemedi", "iki_adim": "Yok", "oturum": Convert_sess}
             acc = db.get("hesaplar")
             acc.append(data)
             db.set("hesaplar", acc)
@@ -133,10 +134,10 @@ async def başla_dinle(event):
     
     if data == "telethon":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- Şimdi Telethon oturumunu gönderin")
+            await x.send_message("- Lütfen Telethon oturumunuzu gönderin.")
             txt = await x.get_response()
             session = txt.text
-            data = {"phone_number": "Tanınmadı", "two-step": "Yok", "session": Convert_sess}
+            data = {"telefon_numarası": "Belirlenemedi", "iki_adim": "Yok", "oturum": Convert_sess}
             acc = db.get("hesaplar")
             acc.append(data)
             db.set("hesaplar", acc)
@@ -151,29 +152,29 @@ async def başla_dinle(event):
                 Button.inline("Hediyeleri Al", data="hediye_al"),
             ],
             [
-                Button.inline("Kanala Katıl", data="kanala_katıl"),
-                Button.inline("Kanalı Terk Et", data="kanaldan_ayrıl"),
+                Button.inline("Kanala Katıl", data="kanala_katil"),
+                Button.inline("Kanaldan Ayrıl", data="kanaldan_ayril"),
             ],
             [
                 Button.inline("Pyrogram Oturumu Kaydet", data="pyrogram"),
                 Button.inline("Telethon Oturumu Kaydet", data="telethon"),
             ],
             [
-                Button.inline("Yedekle", data="hepsini_ziple"),
-                Button.inline("Oturumu Al", data="oturum_al"),
+                Button.inline("Yedek Al", data="zip_tum"),
+                Button.inline("Oturum Al", data="oturum_al"),
             ],
             [
-                Button.inline("Botun Hesap Sayısı", data="hesap_sayısı"),
+                Button.inline("Bot Hesap Sayısı", data="hesap_sayisi"),
             ],
             [
-                Button.inline("Hesapları Temizle", data="kontrol"),
-                Button.inline("Tüm Kanalları Terk Et", data="hepsinden_ayrıl"),
+                Button.inline("Hesapları Temizle", data="kontrol_et"),
+                Button.inline("Kanallardan Ayrıl", data="tumunu_ayril"),
             ],
         ]
-        await event.edit("**- Hesaplarınızdan Özel Bağlantıları Getiren Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
+        await event.edit("**- Hesaplarınızdan Özel Bağlantıları Çeken Bot'a Hoş Geldiniz 🔗**\n\n- Aşağıdaki düğmelerden yapmak istediğiniz işlemi seçin.", buttons=buttons)
     if data == "ekle":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("✔️Şimdi telefon numaranızı ve ülke kodunuzu gönderin, örneğin: +201000000000")
+            await x.send_message("✔️ Lütfen telefon numaranızı ve ülke kodunuzu gönderin, örneğin: +201000000000")
             txt = await x.get_response()
             phone_number = txt.text.replace("+", "").replace(" ", "")
             app = TelegramClient(StringSession(), API_ID, API_HASH)
@@ -182,96 +183,96 @@ async def başla_dinle(event):
             try:
                 code = await app.send_code_request(phone_number)
             except (ApiIdInvalidError):
-                await x.send_message("**API_ID** ve **API_HASH** kombinasyonunuz Telegram API sistemine uymuyor.")
+                await x.send_message("Botunuzun **API_ID** ve **API_HASH** kombinasyonu Telegram sistemi ile eşleşmiyor.")
                 return
             except (PhoneNumberInvalidError):
-                await x.send_message("**Gönderdiğiniz telefon numarası** herhangi bir Telegram hesabına ait değil.")
+                await x.send_message("Gönderdiğiniz **telefon numarası**, herhangi bir Telegram hesabına ait değil.")
                 return
-            await x.send_message("- Doğrulama kodunuz hesabınıza gönderildi.\n\n- Lütfen kodu aşağıdaki formatta gönderin: 1 2 3 4 5")
+            await x.send_message("- Doğrulama kodunuz hesabınıza gönderildi.\n\n- Lütfen aşağıdaki formatta kodu gönderin: 1 2 3 4 5")
             txt = await x.get_response()
             code = txt.text.replace(" ", "")
             try:
                 await app.sign_in(phone_number, code, password=None)
                 string_session = app.session.save()
-                data = {"phone_number": phone_number, "two-step": "Yok", "session": string_session}
-                accounts = db.get("hesaplar")
-                accounts.append(data)
-                db.set("hesaplar", accounts)
+                data = {"telefon_numarası": phone_number, "iki_adim": "Yok", "oturum": string_session}
+                hesaplar = db.get("hesaplar")
+                hesaplar.append(data)
+                db.set("hesaplar", hesaplar)
                 await x.send_message("- Hesap başarıyla kaydedildi ✅")
             except (PhoneCodeInvalidError):
-                await x.send_message("**Gönderdiğiniz OTP** yanlış.")
+                await x.send_message("**Gönderdiğiniz OTP yanlış.**")
                 return
             except (PhoneCodeExpiredError):
-                await x.send_message("**Gönderdiğiniz OTP** süresi dolmuş.")
+                await x.send_message("**Gönderdiğiniz OTP süresi doldu.**")
                 return
             except (SessionPasswordNeededError):
-                await x.send_message("- Lütfen iki adımlı doğrulama kodunuzu gönderin")
+                await x.send_message("- Lütfen iki adımlı doğrulama şifrenizi gönderin")
                 txt = await x.get_response()
                 password = txt.text
                 try:
                     await app.sign_in(password=password)
                 except (PasswordHashInvalidError):
-                    await x.send_message("**Gönderdiğiniz şifre** yanlış.")
+                    await x.send_message("**Gönderdiğiniz parola yanlış.**")
                     return
                 string_session = app.session.save()
-                data = {"phone_number": phone_number, "two-step": password, "session": string_session}
-                accounts = db.get("hesaplar")
-                accounts.append(data)
-                db.set("hesaplar", accounts)
+                data = {"telefon_numarası": phone_number, "iki_adim": password, "oturum": string_session}
+                hesaplar = db.get("hesaplar")
+                hesaplar.append(data)
+                db.set("hesaplar", hesaplar)
                 await x.send_message("- Hesap başarıyla kaydedildi ✅")
-    if data == "hesap_sayısı":
+    if data == "hesap_sayisi":
         acc = db.get("hesaplar")
-        await event.answer(f"- Kayıtlı hesap sayısı: {len(acc)}", alert=True)
+        await event.answer(f"- Bot hesap sayısı: {len(acc)}", alert=True)
     if data == "hediye_al":
-        await event.answer(f"- Hesaplardan hediyeler alınmaya başlandı, lütfen bildirimi bekleyin", alert=True)
+        await event.answer(f"- Hesaplardan hediyeler alınmaya başlandı, lütfen bildirim bekleyin", alert=True)
         acc = db.get("hesaplar")
         count = 0
         for i in acc:
-            x = await get_gift(i["session"])
+            x = await get_gift(i["oturum"])
             if x != False:
-                text = f"**• Yeni bir Telegram hediye bağlantısı 🥳**\n\n- Bağlantı: https://t.me/giftcode/{x}\n- Telefon numarası: `{i['phone_number']}`"
+                text = f"**• Yeni Telegram hediye bağlantısı 🥳**\n\n- Bağlantı: https://t.me/giftcode/{x}\n- Telefon numarası: `{i['telefon_numarası']}`"
                 count += 1
                 await client.send_message(admin, text)
-        await client.send_message(admin, f"- Hesaplar kontrol edildi, {count} bağlantı bulundu")
-    if data == "kanala_katıl":
+        await client.send_message(admin, f"- Hesaplar tarandı, {count} bağlantı bulundu")
+    if data == "kanala_katil":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- Şimdi tüm hesapları belirtilen kanala katmak için bağlantıyı veya kanal kimliğini gönderin")
+            await x.send_message("- Lütfen tüm hesaplarla katılmak istediğiniz kanalın bağlantısını veya kullanıcı adını gönderin.")
             ch = await x.get_response()
             if "@" not in ch.text:
                 if "/t.me/" not in ch.text:
-                    await x.send_message(f"- Lütfen bağlantıyı veya kanal kimliğini doğru formatta gönderin")
+                    await x.send_message(f"- Lütfen doğru bir bağlantı veya kullanıcı adı gönderin.")
                     return 
             channel = ch.text.replace("https://t.me/", "").replace("http://t.me/", "").replace("@", "")
             acc = db.get("hesaplar")
             true, false = 0, 0
-            await x.send_message(f"- {len(acc)} hesaptan katılmaya başlandı")
+            await x.send_message(f"- {len(acc)} hesapla katılmaya başlandı")
             for i in acc:
-                xx = await join_channel(i["session"], channel)
+                xx = await join_channel(i["oturum"], channel)
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
-    if data == "kanaldan_ayrıl":
+            await x.send_message(f"**- İsteğiniz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
+    if data == "kanaldan_ayril":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- Şimdi tüm hesapları belirtilen kanaldan çıkmak için bağlantıyı veya kanal kimliğini gönderin")
+            await x.send_message("- Lütfen tüm hesaplarla ayrılmak istediğiniz kanalın bağlantısını veya kullanıcı adını gönderin.")
             ch = await x.get_response()
             if "@" not in ch.text:
                 if "/t.me/" not in ch.text:
-                    await x.send_message(f"- Lütfen bağlantıyı veya kanal kimliğini doğru formatta gönderin")
+                    await x.send_message(f"- Lütfen doğru bir bağlantı veya kullanıcı adı gönderin.")
                     return 
             channel = ch.text.replace("https://t.me/", "").replace("http://t.me/", "").replace("@", "")
             acc = db.get("hesaplar")
             true, false = 0, 0
-            await x.send_message(f"- {len(acc)} hesaptan ayrılmaya başlandı")
+            await x.send_message(f"- {len(acc)} hesapla ayrılmaya başlandı")
             for i in acc:
-                xx = await leave_channel(i["session"], channel)
+                xx = await leave_channel(i["oturum"], channel)
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
-    if data == 'hepsini_ziple':
+            await x.send_message(f"**- İsteğiniz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
+    if data == 'zip_tum':
         folder_path = f"./database"
         zip_file_name = f"database.zip"
         zip_file_nam = f"database"
@@ -282,44 +283,44 @@ async def başla_dinle(event):
             os.remove(zip_file_name)
         except Exception as a:
             print(a)
-    if data == "hepsinden_ayrıl":
+    if data == "tumunu_ayril":
         buttons = [
             [
-                Button.inline("Onayla ✅", data="hepsinden_ayrıl_kanallar"),
-                Button.inline("İptal ❌", data="iptal"),
+                Button.inline("Evet ✅", data="tumunu_ayril_channels"),
+                Button.inline("İptal ❌", data="cancel"),
             ]
         ]
-        await event.edit("**- Tüm hesaplardan kanalları terk etmek istediğinize emin misiniz?**", buttons=buttons)
-    if data == "hepsinden_ayrıl_kanallar":
+        await event.edit("**- Tüm hesaplarından kanallardan ayrılmak istediğinizden emin misiniz?**", buttons=buttons)
+    if data == "tumunu_ayril_channels":
         async with bot.conversation(event.chat_id) as x:
             acc = db.get("hesaplar")
-            await event.edit(f"**- {len(acc)} hesaptan kanalları terk etmeye başlandı, tamamlandığında bildirim alacaksınız **")
+            await event.edit(f"**- {len(acc)} hesapla kanallardan ayrılmaya başlandı, tamamlanınca bildirim alacaksınız **")
             true, false = 0, 0
-            await x.send_message(f"- {len(acc)} hesaptan kanalları terk etmeye başlandı")
+            await x.send_message(f"- {len(acc)} hesapla ayrılmaya başlandı")
             for i in acc:
-                xx = await leave_all(i["session"])
+                xx = await leave_all(i["oturum"])
                 if xx is True:
                     true += 1
                 else:
                     false += 1
-            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
+            await x.send_message(f"**- İsteğiniz başarıyla tamamlandı ✅**\n\n- Başarılı: {true}\n- Başarısız: {false}")
     
-    if data == "kontrol":
+    if data == "kontrol_et":
         buttons = [
             [
-                Button.inline("Onayla ✅", data="hesapları_kontrol_et"),
-                Button.inline("İptal ❌", data="iptal"),
+                Button.inline("Evet ✅", data="hesap_kontrol"),
+                Button.inline("İptal ❌", data="cancel"),
             ]
         ]
-        await event.edit("**- Tüm hesapları kontrol etmek istediğinize emin misiniz?**", buttons=buttons)
-    if data == "hesapları_kontrol_et":
+        await event.edit("**- Tüm hesaplarınızı kontrol etmek istediğinizden emin misiniz?**", buttons=buttons)
+    if data == "hesap_kontrol":
         async with bot.conversation(event.chat_id) as x:
             acc = db.get("hesaplar")
-            await event.edit(f"**- {len(acc)} hesap kontrol edilmeye başlandı, tamamlandığında bildirim alacaksınız **")
+            await event.edit(f"**- {len(acc)} hesapla kontrol işlemi başlatıldı, tamamlanınca bildirim alacaksınız **")
             true, false = 0, 0
-            await x.send_message(f"- {len(acc)} hesap kontrol edilmeye başlandı")
+            await x.send_message(f"- {len(acc)} hesapla kontrol ediliyor")
             for i in acc:
-                Convert_sess = MangSession.TELETHON_TO_PYROGRAM(i["session"])
+                Convert_sess = MangSession.TELETHON_TO_PYROGRAM(i["oturum"])
                 xx = await check(Convert_sess, client, user_id)
                 if xx is True:
                     true += 1
@@ -327,18 +328,18 @@ async def başla_dinle(event):
                     false += 1
                     acc.remove(i)
                     db.set("hesaplar", acc)
-                await event.edit(f"**- Hesaplar kontrol ediliyor 📂**\n\n- Çalışan hesaplar: {true}\n- Silinen hesaplar: {false}")
+                await event.edit(f"**- Hesaplar kontrol ediliyor 📂**\n\n- Aktif Hesaplar: {true}\n- Silinen Hesaplar: {false}")
                 
-            await x.send_message(f"**- İşleminiz başarıyla tamamlandı ✅**\n\n- Çalışan hesaplar: {true}\n- Silinen hesaplar: {false}")
+            await x.send_message(f"**- Hesaplar başarıyla kontrol edildi ✅**\n\n- Aktif Hesaplar: {true}\n- Silinen Hesaplar: {false}")
     if data == "oturum_al":
         async with bot.conversation(event.chat_id) as x:
-            await x.send_message("- Lütfen bot için kaydettiğiniz telefon numarasını gönderin")
+            await x.send_message("- Lütfen botun kaydedildiği telefon numarasını gönderin")
             txt = await x.get_response()
             phone_number = txt.text.replace("+", "").replace(" ", "")
             acc = db.get("hesaplar")
             for i in acc:
-                if phone_number == i['phone_number']:
-                    text = f"• Telefon numarası: {phone_number}\n\n- İki Adımlı Doğrulama: {i['two-step']}\n\n- Oturum: `{i['session']}"
+                if phone_number == i['telefon_numarası']:
+                    text = f"• Telefon Numarası: {phone_number}\n\n- İki Adımlı Doğrulama: {i['iki_adim']}\n\n- Oturum: `{i['oturum']}"
                     await x.send_message(text)
                     return
             await x.send_message("- Bu numara hesaplar listesinde bulunamadı")
@@ -358,24 +359,20 @@ async def handle_zip_file(event):
                     zip_ref.extractall('olddata')
                     
                 os.remove(file)
-                await x.send_message('Dosya başarıyla açıldı ve "olddata" klasörüne konuldu.')
-                olddb = uu('olddata/data.sqlite', 'eski')
+                await x.send_message('Dosya başarıyla çıkarıldı ve "olddata" klasörüne yerleştirildi.')
+                olddb = uu('olddata/data.sqlite', 'fuck')
                 accs = db.get("hesaplar")
                 if olddb.exists("sessions") and len(olddb.get("sessions")) > 0:
                     for i in olddb.get("sessions"):
                         Convert_sess = MangSession.PYROGRAM_TO_TELETHON(i)
-                        data = {"phone_number": "Tanımlanamadı", "two-step": "Yok", "session": Convert_sess}
+                        data = {"telefon_numarası": "Tanınmadı", "iki_adim": "Yok", "oturum": Convert_sess}
                         if data not in accs:
                             accs.append(data)
                             db.set("hesaplar", accs)
-                    await x.send_message(f'{len(olddb.get("sessions"))} hesap başarıyla eklendi.')
+                    await x.send_message(f'{len(olddb.get("sessions"))} hesap başarıyla eklenmiştir.')
                 else: 
-                    await x.send_message(f'• Bu depoda herhangi bir numara yok.')
+                    await x.send_message(f'• Bu yedek herhangi bir numara içermiyor')
         except Exception as e:
-            await x.send_message(f'Zipten çıkarılırken bir sorun oluştu: {str(e)}')
+            await x.send_message(f'Çıkarırken bir sorun oluştu: {str(e)}')
         
 client.run_until_disconnected()
-
-#by @polatalemdar330
-#channel: https://t.me/polatalemdar330
-#in 06/02/2024
